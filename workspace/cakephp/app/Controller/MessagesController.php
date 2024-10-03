@@ -229,9 +229,7 @@ class MessagesController extends AppController {
             $this->response->body(json_encode($response));
             return $response;
         }
-
-        $this->set('hasMore', $hasMore);
-        $this->set('messages', $messages);
+    
         $this->set('room', $room);
         $this->set('title_for_layout', 'Message Details | MB');
     }
