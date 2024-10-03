@@ -91,6 +91,10 @@ class UsersController extends AppController {
                 $file = $this->request->data['User']['image'];
                 $fileExtensions = pathinfo($file['name'], PATHINFO_EXTENSION);
                 if (in_array(strtolower($fileExtensions), array('jpg', 'png', 'gif'))) {
+                    $root = WWW_ROOT . 'img/profiles/';
+                    if (!file_exists($root)) {
+                        mkdir($root, 0777, true);
+                    }
                     $destination = WWW_ROOT . 'img/profiles/' . $this->User->id . '.png';
                     if (file_exists($destination)) {
                         unlink($destination);
