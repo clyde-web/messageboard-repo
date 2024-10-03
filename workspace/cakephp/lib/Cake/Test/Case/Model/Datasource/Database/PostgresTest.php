@@ -210,18 +210,11 @@ class PostgresTest extends CakeTestCase {
 	public $Dbo2 = null;
 
 /**
- * Number locale before changing during testing
- *
- * @var string
- */
-	public $restoreLocaleNumeric = null;
-
-/**
  * Sets up a Dbo class instance for testing
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
@@ -235,15 +228,10 @@ class PostgresTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		Configure::write('Cache.disable', false);
 		unset($this->Dbo2);
-
-		if (!is_null($this->restoreLocaleNumeric)) {
-			setlocale(LC_NUMERIC, $this->restoreLocaleNumeric);
-			$this->restoreLocaleNumeric = null;
-		}
 	}
 
 /**
@@ -327,7 +315,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testValueQuoting() {
-		$this->assertEquals("1.2", $this->Dbo->value(1.2, 'float'));
+		$this->assertEquals("1.200000", $this->Dbo->value(1.2, 'float'));
 		$this->assertEquals("'1,2'", $this->Dbo->value('1,2', 'float'));
 
 		$this->assertEquals("0", $this->Dbo->value('0', 'integer'));
@@ -361,7 +349,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testLocalizedFloats() {
-		$this->restoreLocaleNumeric = setlocale(LC_NUMERIC, 0);
+		$restore = setlocale(LC_NUMERIC, 0);
 
 		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
 
@@ -369,7 +357,9 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals("3.141593", $result);
 
 		$result = $this->db->value(3.14);
-		$this->assertEquals("3.14", $result);
+		$this->assertEquals("3.140000", $result);
+
+		setlocale(LC_NUMERIC, $restore);
 	}
 
 /**
@@ -540,7 +530,7 @@ class PostgresTest extends CakeTestCase {
 		));
 
 		$result = $this->Dbo->createSchema($schema);
-		$this->assertDoesNotMatchRegularExpression('/^CREATE INDEX(.+);,$/', $result);
+		$this->assertNotRegExp('/^CREATE INDEX(.+);,$/', $result);
 	}
 
 /**
@@ -576,10 +566,10 @@ class PostgresTest extends CakeTestCase {
 		);
 		$result = $db1->createSchema($schema, 'datatype_tests');
 
-		$this->assertDoesNotMatchRegularExpression('/timestamp DEFAULT/', $result);
-		$this->assertMatchesRegularExpression('/\"full_length\"\s*text\s.*,/', $result);
-		$this->assertStringContainsString('timestamp ,', $result);
-		$this->assertStringContainsString('"huge_int" bigint NOT NULL,', $result);
+		$this->assertNotRegExp('/timestamp DEFAULT/', $result);
+		$this->assertRegExp('/\"full_length\"\s*text\s.*,/', $result);
+		$this->assertContains('timestamp ,', $result);
+		$this->assertContains('"huge_int" bigint NOT NULL,', $result);
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatype_tests'));
 
@@ -622,7 +612,7 @@ class PostgresTest extends CakeTestCase {
 		);
 		$result = $db1->createSchema($schema, 'bigserial_tests');
 
-		$this->assertStringContainsString('"id" bigserial NOT NULL,', $result);
+		$this->assertContains('"id" bigserial NOT NULL,', $result);
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('bigserial_tests'));
 	}
@@ -703,6 +693,8 @@ class PostgresTest extends CakeTestCase {
 		$this->assertEquals(true, $result['author_id']['null']);
 		$this->assertEquals(false, $result['title']['null']);
 
+		$this->Dbo->query($this->Dbo->dropSchema($New));
+
 		$New = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
@@ -717,9 +709,7 @@ class PostgresTest extends CakeTestCase {
 			)
 		));
 		$result = $this->Dbo->alterSchema($New->compare($Old), 'alter_posts');
-		$this->assertDoesNotMatchRegularExpression('/varchar\(36\) NOT NULL/i', $result);
-
-		$this->Dbo->query($this->Dbo->dropSchema($New));
+		$this->assertNotRegExp('/varchar\(36\) NOT NULL/i', $result);
 	}
 
 /**
@@ -874,10 +864,10 @@ class PostgresTest extends CakeTestCase {
 				)
 			)
 		));
-		$this->assertStringContainsString('RENAME "title" TO "subject";', $query);
-		$this->assertStringContainsString('ALTER COLUMN "subject" TYPE', $query);
-		$this->assertStringNotContainsString(";\n\tALTER COLUMN \"subject\" TYPE", $query);
-		$this->assertStringNotContainsString('ALTER COLUMN "title" TYPE "subject"', $query);
+		$this->assertContains('RENAME "title" TO "subject";', $query);
+		$this->assertContains('ALTER COLUMN "subject" TYPE', $query);
+		$this->assertNotContains(";\n\tALTER COLUMN \"subject\" TYPE", $query);
+		$this->assertNotContains('ALTER COLUMN "title" TYPE "subject"', $query);
 	}
 
 /**
@@ -1151,7 +1141,7 @@ class PostgresTest extends CakeTestCase {
 
 		$result = $db->limit(10, 300000000000000000000000000000);
 		$scientificNotation = sprintf('%.1E', 300000000000000000000000000000);
-		$this->assertStringNotContainsString($scientificNotation, $result);
+		$this->assertNotContains($scientificNotation, $result);
 	}
 
 /**

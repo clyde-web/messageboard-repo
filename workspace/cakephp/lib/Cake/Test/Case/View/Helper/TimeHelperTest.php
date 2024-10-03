@@ -61,7 +61,7 @@ class TimeHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->View = new View(null);
 	}
@@ -71,7 +71,7 @@ class TimeHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		unset($this->View);
 		parent::tearDown();
 	}

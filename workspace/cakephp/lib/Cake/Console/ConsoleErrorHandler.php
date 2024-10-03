@@ -75,7 +75,7 @@ class ConsoleErrorHandler {
  * @return void
  */
 	public function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (!(error_reporting() & $code)) {
+		if (error_reporting() === 0) {
 			return;
 		}
 		$stderr = static::getStderr();

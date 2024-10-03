@@ -32,7 +32,7 @@ class PhpAclTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Acl.classname', 'PhpAcl');
 		$Collection = new ComponentCollection();
@@ -283,15 +283,19 @@ class PhpAclTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidConfigWithAroMissing() {
-		$this->expectException('AclException');
-		$this->expectExceptionMessage('"roles" section not found in configuration');
+		$this->setExpectedException(
+			'AclException',
+			'"roles" section not found in configuration'
+		);
 		$config = array('aco' => array('allow' => array('foo' => '')));
 		$this->PhpAcl->build($config);
 	}
 
 	public function testInvalidConfigWithAcosMissing() {
-		$this->expectException('AclException');
-		$this->expectExceptionMessage('Neither "allow" nor "deny" rules were provided in configuration.');
+		$this->setExpectedException(
+			'AclException',
+			'Neither "allow" nor "deny" rules were provided in configuration.'
+		);
 
 		$config = array(
 			'roles' => array('Role/foo' => null),
@@ -342,8 +346,7 @@ class PhpAclTest extends CakeTestCase {
 			),
 		);
 
-		$this->expectError();
-		$this->expectErrorMessage('cycle detected');
+		$this->expectError('PHPUnit_Framework_Error', 'cycle detected' /* ... */);
 		$this->PhpAcl->build($config);
 	}
 

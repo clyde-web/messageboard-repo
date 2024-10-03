@@ -206,7 +206,7 @@ class ComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(

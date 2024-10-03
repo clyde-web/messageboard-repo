@@ -32,7 +32,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->fixtureManager = new CakeFixtureManager();
 	}
@@ -42,7 +42,7 @@ class CakeFixtureManagerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->fixtureManager);
 	}

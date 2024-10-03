@@ -51,7 +51,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
@@ -74,7 +74,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
 	}
@@ -215,11 +215,11 @@ class FixtureTaskTest extends CakeTestCase {
 			'fromTable' => true, 'schema' => 'Article', 'records' => false
 		));
 
-		$this->assertStringContainsString('class ArticleFixture extends CakeTestFixture', $result);
-		$this->assertStringContainsString('public $records', $result);
-		$this->assertStringContainsString('public $import', $result);
-		$this->assertStringContainsString("'title' => 'First Article'", $result, 'Missing import data');
-		$this->assertStringContainsString('Second Article', $result, 'Missing import data');
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $records', $result);
+		$this->assertContains('public $import', $result);
+		$this->assertContains("'title' => 'First Article'", $result, 'Missing import data');
+		$this->assertContains('Second Article', $result, 'Missing import data');
 	}
 
 /**
@@ -230,7 +230,7 @@ class FixtureTaskTest extends CakeTestCase {
 	public function testImportOptionsAlternateConnection() {
 		$this->Task->connection = 'test';
 		$result = $this->Task->bake('Article', false, array('schema' => 'Article'));
-		$this->assertStringContainsString("'connection' => 'test'", $result);
+		$this->assertContains("'connection' => 'test'", $result);
 	}
 
 /**
@@ -259,7 +259,7 @@ class FixtureTaskTest extends CakeTestCase {
 			'schema' => 'Article',
 			'records' => false
 		));
-		$this->assertStringContainsString("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
+		$this->assertContains("'body' => 'Body \"value\"'", $result, 'Data has bad escaping');
 	}
 
 /**
@@ -445,28 +445,28 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article');
-		$this->assertStringContainsString('class ArticleFixture extends CakeTestFixture', $result);
-		$this->assertStringContainsString('public $fields', $result);
-		$this->assertStringContainsString('public $records', $result);
-		$this->assertStringNotContainsString('public $import', $result);
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $fields', $result);
+		$this->assertContains('public $records', $result);
+		$this->assertNotContains('public $import', $result);
 
 		$result = $this->Task->bake('Article', 'comments');
-		$this->assertStringContainsString('class ArticleFixture extends CakeTestFixture', $result);
-		$this->assertStringContainsString('public $table = \'comments\';', $result);
-		$this->assertStringContainsString('public $fields = array(', $result);
+		$this->assertContains('class ArticleFixture extends CakeTestFixture', $result);
+		$this->assertContains('public $table = \'comments\';', $result);
+		$this->assertContains('public $fields = array(', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertStringContainsString("public \$import = array('records' => true, 'connection' => 'test');", $result);
-		$this->assertStringNotContainsString('public $records', $result);
+		$this->assertContains("public \$import = array('records' => true, 'connection' => 'test');", $result);
+		$this->assertNotContains('public $records', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertStringContainsString("public \$import = array('model' => 'Article', 'connection' => 'test');", $result);
-		$this->assertStringNotContainsString('public $fields', $result);
+		$this->assertContains("public \$import = array('model' => 'Article', 'connection' => 'test');", $result);
+		$this->assertNotContains('public $fields', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertStringContainsString("public \$import = array('model' => 'Article', 'records' => true, 'connection' => 'test');", $result);
-		$this->assertStringNotContainsString('public $fields', $result);
-		$this->assertStringNotContainsString('public $records', $result);
+		$this->assertContains("public \$import = array('model' => 'Article', 'records' => true, 'connection' => 'test');", $result);
+		$this->assertNotContains('public $fields', $result);
+		$this->assertNotContains('public $records', $result);
 	}
 
 /**
@@ -479,14 +479,14 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', 'datatypes');
-		$this->assertStringContainsString("'float_field' => 1", $result);
-		$this->assertStringContainsString("'bool' => 1", $result);
-		$this->assertStringContainsString("'tiny_int' => 1", $result);
-		$this->assertStringContainsString("'small_int' => 1", $result);
-		$this->assertStringContainsString("'huge_int' => 1", $result);
+		$this->assertContains("'float_field' => 1", $result);
+		$this->assertContains("'bool' => 1", $result);
+		$this->assertContains("'tiny_int' => 1", $result);
+		$this->assertContains("'small_int' => 1", $result);
+		$this->assertContains("'huge_int' => 1", $result);
 
 		$result = $this->Task->bake('Article', 'binary_tests');
-		$this->assertStringContainsString("'data' => 'Lorem ipsum dolor sit amet'", $result);
+		$this->assertContains("'data' => 'Lorem ipsum dolor sit amet'", $result);
 	}
 
 /**

@@ -229,8 +229,8 @@ class CakeFixtureManager {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
-				$this->_setupTable($fixture, $db, $test->dropTables);
 				$db->begin();
+				$this->_setupTable($fixture, $db, $test->dropTables);
 				$fixture->insert($db);
 				$db->commit();
 			}

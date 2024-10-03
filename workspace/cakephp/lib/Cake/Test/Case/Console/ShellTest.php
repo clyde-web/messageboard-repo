@@ -137,7 +137,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 
 		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
@@ -724,7 +724,7 @@ class ShellTest extends CakeTestCase {
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
-		$result = $Mock->runCommand('', array());
+		$result = $Mock->runCommand(null, array());
 		$this->assertTrue($result);
 	}
 
@@ -815,7 +815,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue($Parser));
 		$Shell->expects($this->once())->method('out');
 
-		$Shell->runCommand('', array('--help'));
+		$Shell->runCommand(null, array('--help'));
 	}
 
 /**
@@ -965,7 +965,7 @@ TEXT;
 		$this->Shell->log_something();
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString($this->Shell->testMessage, $contents);
+		$this->assertContains($this->Shell->testMessage, $contents);
 
 		CakeLog::enable('stdout');
 		CakeLog::enable('stderr');
@@ -1014,10 +1014,10 @@ TEXT;
 /**
  * Test getting an invalid helper
  *
+ * @expectedException RunTimeException
  * @return void
  */
 	public function testGetInvalidHelper() {
-		$this->expectException(RunTimeException::class);
 		$this->Shell->helper("tomato");
 	}
 

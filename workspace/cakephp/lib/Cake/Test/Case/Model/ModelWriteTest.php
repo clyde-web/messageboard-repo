@@ -115,7 +115,7 @@ class ModelWriteTest extends BaseModelTest {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
 	}

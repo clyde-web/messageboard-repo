@@ -41,7 +41,7 @@ class FormAuthenticateTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->Collection = $this->getMock('ComponentCollection');
 		$this->auth = new FormAuthenticate($this->Collection, array(

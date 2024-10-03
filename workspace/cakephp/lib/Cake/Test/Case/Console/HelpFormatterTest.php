@@ -252,7 +252,7 @@ TEXT;
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
 		$expected = 'cake mycommand [options] <model> [<other_longer>]';
-		$this->assertStringContainsString($expected, $result);
+		$this->assertContains($expected, $result);
 	}
 
 /**
@@ -276,7 +276,7 @@ TEXT;
 		$formatter = new HelpFormatter($parser);
 		$result = $formatter->text();
 		$expected = 'cake mycommand [-h] [arguments]';
-		$this->assertStringContainsString($expected, $result);
+		$this->assertContains($expected, $result);
 	}
 
 /**

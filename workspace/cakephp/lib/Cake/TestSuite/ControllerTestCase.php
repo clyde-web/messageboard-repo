@@ -432,7 +432,7 @@ abstract class ControllerTestCase extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		unset(
 			$this->contents,

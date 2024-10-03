@@ -24,7 +24,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
  *
  * @package       Cake.TestSuite
  */
-abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
+abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
  * The class responsible for managing the creation, loading and removing of fixtures
@@ -67,6 +67,34 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 	protected $_pathRestore = array();
 
 /**
+ * Runs the test case and collects the results in a TestResult object.
+ * If no TestResult object is passed a new one will be created.
+ * This method is run for each test method in this class
+ *
+ * @param PHPUnit_Framework_TestResult $result The test result object
+ * @return PHPUnit_Framework_TestResult
+ * @throws InvalidArgumentException
+ */
+	public function run(PHPUnit_Framework_TestResult $result = null) {
+		$level = ob_get_level();
+
+		if (!empty($this->fixtureManager)) {
+			$this->fixtureManager->load($this);
+		}
+		$result = parent::run($result);
+		if (!empty($this->fixtureManager)) {
+			$this->fixtureManager->unload($this);
+			unset($this->fixtureManager, $this->db);
+		}
+
+		for ($i = ob_get_level(); $i < $level; ++$i) {
+			ob_start();
+		}
+
+		return $result;
+	}
+
+/**
  * Called when a test case method is about to start (to be overridden when needed.)
  *
  * @param string $method Test method about to get executed.
@@ -105,7 +133,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 
 		if (empty($this->_configure)) {
@@ -124,7 +152,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		App::build($this->_pathRestore, App::RESET);
 		if (class_exists('ClassRegistry', false)) {
@@ -157,7 +185,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  *
  * @return void
  */
-	protected function assertPreConditions(): void {
+	protected function assertPreConditions() {
 		parent::assertPreConditions();
 		$this->startTest($this->getName());
 	}
@@ -167,7 +195,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  *
  * @return void
  */
-	protected function assertPostConditions(): void {
+	protected function assertPostConditions() {
 		parent::assertPostConditions();
 		$this->endTest($this->getName());
 	}
@@ -296,10 +324,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
 		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
-		if ($ignoreCase) {
-			return $this->assertStringContainsStringIgnoringCase($needle, $haystack, $message);
-		}
-		return $this->assertStringContainsString($needle, $haystack, $message);
+		return $this->assertContains($needle, $haystack, $message, $ignoreCase);
 	}
 
 /**
@@ -315,10 +340,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
 		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
-		if ($ignoreCase) {
-			return $this->assertStringNotContainsStringIgnoringCase($needle, $haystack, $message);
-		}
-		return $this->assertStringNotContainsString($needle, $haystack, $message);
+		return $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
 	}
 
 /**
@@ -552,7 +574,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 /**
- * Compatibility wrapper function for assertMatchesRegularExpression
+ * Compatibility wrapper function for assertRegexp
  *
  * @param mixed $pattern a regular expression
  * @param string $string the text to be matched
@@ -561,7 +583,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  * @return void
  */
 	protected static function assertPattern($pattern, $string, $message = '') {
-		return static::assertMatchesRegularExpression($pattern, $string, $message);
+		return static::assertRegExp($pattern, $string, $message);
 	}
 
 /**
@@ -591,7 +613,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 /**
- * Compatibility wrapper function for assertDoesNotMatchRegularExpression
+ * Compatibility wrapper function for assertNotRegExp
  *
  * @param mixed $pattern a regular expression
  * @param string $string the text to be matched
@@ -600,7 +622,7 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  * @return void
  */
 	protected static function assertNoPattern($pattern, $string, $message = '') {
-		return static::assertDoesNotMatchRegularExpression($pattern, $string, $message);
+		return static::assertNotRegExp($pattern, $string, $message);
 	}
 
 /**
@@ -610,6 +632,33 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
  * @return void
  */
 	protected function assertNoErrors() {
+	}
+
+/**
+ * Compatibility wrapper function for setExpectedException
+ *
+ * @param mixed $expected the name of the Exception or error
+ * @param string $message the text to display if the assertion is not correct
+ * @deprecated 3.0.0 This is a compatibility wrapper for 1.x. It will be removed in 3.0
+ * @return void
+ */
+	protected function expectError($expected = false, $message = '') {
+		if (!$expected) {
+			$expected = 'Exception';
+		}
+		$this->setExpectedException($expected, $message);
+	}
+
+/**
+ * Compatibility wrapper function for setExpectedException
+ *
+ * @param mixed $name The name of the expected Exception.
+ * @param string $message the text to display if the assertion is not correct
+ * @deprecated 3.0.0 This is a compatibility wrapper for 1.x. It will be removed in 3.0.
+ * @return void
+ */
+	public function expectException($name = 'Exception', $message = '') {
+		$this->setExpectedException($name, $message);
 	}
 
 /**
@@ -767,6 +816,12 @@ abstract class CakeTestCase extends \PHPUnit\Framework\TestCase {
 		$callOriginalMethods = false,
 		$proxyTarget = null
 	) {
+		$phpUnitVersion = PHPUnit_Runner_Version::id();
+		if (version_compare($phpUnitVersion, '5.7.0', '<')) {
+			return parent::getMock($originalClassName, $methods, $arguments,
+					$mockClassName, $callOriginalConstructor, $callOriginalClone,
+					$callAutoload, $cloneArguments, $callOriginalMethods, $proxyTarget);
+		}
 		if ($cloneArguments) {
 			throw new InvalidArgumentException('$cloneArguments parameter is not supported');
 		}

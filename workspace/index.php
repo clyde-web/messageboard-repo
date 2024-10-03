@@ -1,5 +1,8 @@
 <?php
 // initialize any config files
+header("Location: /cakephp");
+exit;
+
 require_once "config/init.php";
 
 // $car1 = new Car("v6", 4, false, 20, 5);

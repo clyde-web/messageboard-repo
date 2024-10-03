@@ -47,7 +47,7 @@ class TestCakeLog extends CakeLog {
  */
 class ConsoleLogTest extends CakeTestCase {
 
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		CakeLog::config('debug', array(
 			'engine' => 'File',
@@ -61,7 +61,7 @@ class ConsoleLogTest extends CakeTestCase {
 		));
 	}
 
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
@@ -113,7 +113,7 @@ class ConsoleLogTest extends CakeTestCase {
 		TestCakeLog::write(LOG_ERR, $message);
 		$this->assertTrue(file_exists(LOGS . 'error.log'), 'error.log missing');
 		$logOutput = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString($message, $logOutput);
+		$this->assertContains($message, $logOutput);
 
 		// TestConsoleLog is only interested in `error` type
 		$message = 'Test info message';
@@ -125,9 +125,9 @@ class ConsoleLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'), 'error.log missing');
 		$this->assertTrue(file_exists(LOGS . 'debug.log'), 'debug.log missing');
 		$logOutput = file_get_contents(LOGS . 'error.log');
-		$this->assertStringNotContainsString($message, $logOutput);
+		$this->assertNotContains($message, $logOutput);
 		$logOutput = file_get_contents(LOGS . 'debug.log');
-		$this->assertStringContainsString($message, $logOutput);
+		$this->assertContains($message, $logOutput);
 	}
 
 /**

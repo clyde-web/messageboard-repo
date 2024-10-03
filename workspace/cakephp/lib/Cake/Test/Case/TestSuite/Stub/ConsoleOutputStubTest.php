@@ -24,7 +24,7 @@ class ConsoleOutputStubTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 
 		$this->stub = new ConsoleOutputStub();

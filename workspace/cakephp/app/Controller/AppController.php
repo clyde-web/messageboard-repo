@@ -31,45 +31,42 @@ App::uses('Controller', 'Controller');
  * @link		https://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-    // this will tell cakek to support php files for the view for rendering
     public $ext = '.php';
-
-    // include the Post Model
-    public $uses = array(
-        'Post'
-    );
-
-    // - include components
+    public $helpers = array('Form', 'Html');
     public $components = array(
         'Flash',
+        'Session',
         'Auth' => array(
-            // if the user is logged in
-            'loginRedirect' => array(
+            'loginAction' => array(
                 'controller' => 'users',
+                'action' => 'login'
+            ),
+            'loginRedirect' => array(
+                'controller' => 'messages',
                 'action' => 'index'
             ),
-
-            // if teh user is not logged in AND accesses a forbidden action,
             'logoutRedirect' => array(
-                'controller' => 'pages',
-                'action' => 'display',
-                'home'
+                'controller' => 'users',
+                'action' => 'login'
             ),
             'authenticate' => array(
                 'Form' => array(
-                    // 'passwordHasher' => 'Blowfish',
-                    // if you want to customize the fields for logging in
-                    // 'fields'=>array('username'=>'email','password'=>'password')
+                    'fields' => array(
+                        'username' => 'email',
+                        'password' => 'password'
+                    ),
+                    'passwordHasher' => 'Blowfish'
                 )
-            )
+            ),
+            'authError' => 'Please login to access the page'
         )
     );
-    
-    public function beforeFilter(){
+
+    public function beforeFilter() {
         parent::beforeFilter();
-        
-        // global restriction
-        // $this->Auth->allow('index', 'view', 'add');
-        $this->set('currentUser', $this->Auth->user());
+        $this->Auth->allow('login', 'register');
+        if (in_array($this->request->here, array('/users/login', '/users/register')) && $this->Auth->user()) {
+            return $this->redirect(array('controller' => 'messages', 'action' => 'index'));
+        }
     }
 }

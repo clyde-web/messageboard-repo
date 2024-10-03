@@ -27,7 +27,6 @@ App::uses('Set', 'Utility');
  *
  * @package       Cake.Core
  */
-#[\AllowDynamicProperties]
 class CakeObject {
 
 /**

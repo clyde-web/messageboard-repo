@@ -30,7 +30,7 @@ class L10nTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::delete('Config.language');
 	}

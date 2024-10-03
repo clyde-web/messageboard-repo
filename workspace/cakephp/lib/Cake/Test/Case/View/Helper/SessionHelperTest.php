@@ -32,7 +32,7 @@ class SessionHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
@@ -84,7 +84,7 @@ class SessionHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		$_SESSION = array();
 		unset($this->View, $this->Session);
 		CakeSession::destroy();

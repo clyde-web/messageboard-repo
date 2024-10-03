@@ -42,7 +42,6 @@ App::uses('CakeEventManager', 'Event');
  * @package       Cake.Model
  * @link          https://book.cakephp.org/2.0/en/models.html
  */
-#[AllowDynamicProperties]
 class Model extends CakeObject implements CakeEventListener {
 
 /**
@@ -1979,7 +1978,7 @@ class Model extends CakeObject implements CakeEventListener {
 		$this->_clearCache();
 		$this->validationErrors = array();
 		$this->whitelist = $_whitelist;
-		$this->data = [];
+		$this->data = false;
 
 		return $success;
 	}

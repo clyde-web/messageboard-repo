@@ -34,7 +34,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function setupBeforeClass() : void {
+	public static function setupBeforeClass() {
 		Cache::config('session_test', array(
 			'engine' => 'File',
 			'prefix' => 'session_test_'
@@ -49,7 +49,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function teardownAfterClass() : void {
+	public static function teardownAfterClass() {
 		Cache::clear(false, 'session_test');
 		Cache::drop('session_test');
 
@@ -61,7 +61,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->storage = new CacheSession();
 	}
@@ -71,7 +71,7 @@ class CacheSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->storage);
 	}

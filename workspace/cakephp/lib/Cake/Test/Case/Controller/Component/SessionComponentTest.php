@@ -90,7 +90,7 @@ class SessionComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function setupBeforeClass() : void {
+	public static function setupBeforeClass() {
 		static::$_sessionBackup = Configure::read('Session');
 		Configure::write('Session', array(
 			'defaults' => 'php',
@@ -104,7 +104,7 @@ class SessionComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function teardownAfterClass() : void {
+	public static function teardownAfterClass() {
 		Configure::write('Session', static::$_sessionBackup);
 	}
 
@@ -113,7 +113,7 @@ class SessionComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$_SESSION = null;
 		$this->ComponentCollection = new ComponentCollection();
@@ -124,7 +124,7 @@ class SessionComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		CakeSession::destroy();
 	}

@@ -37,7 +37,7 @@ class ApcEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$hasApc = extension_loaded('apc') || extension_loaded('apcu');
 		$this->skipIf(!$hasApc, 'Apc is not installed or configured properly.');
@@ -60,7 +60,7 @@ class ApcEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('apc');

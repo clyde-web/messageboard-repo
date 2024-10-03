@@ -31,7 +31,7 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$streams = CakeLog::configured();
 		foreach ($streams as $stream) {
@@ -72,10 +72,10 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test all the errors from failed logger imports
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testImportingLoggerFailure() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::config('fail', array());
 	}
 
@@ -106,20 +106,20 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test config() with invalid key name
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testInvalidKeyName() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::config('1nv', array('engine' => 'File'));
 	}
 
 /**
  * test that loggers have to implement the correct interface.
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testNotImplementingInterface() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::config('fail', array('engine' => 'stdClass'));
 	}
 
@@ -160,7 +160,7 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = file_get_contents(LOGS . 'error.log');
-		$this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 		unlink(LOGS . 'error.log');
 	}
 
@@ -203,8 +203,8 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::write(LOG_WARNING, 'Test warning 1');
 		CakeLog::write(LOG_WARNING, 'Test warning 2');
 		$result = file_get_contents(LOGS . 'error.log');
-		$this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
-		$this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
+		$this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 1/', $result);
+		$this->assertRegExp('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning 2$/', $result);
 		unlink(LOGS . 'error.log');
 	}
 
@@ -241,9 +241,9 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'spam.log'));
 
 		$contents = file_get_contents(LOGS . 'spam.log');
-		$this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+		$this->assertContains('Debug: ' . $testMessage, $contents);
 		$contents = file_get_contents(LOGS . 'eggs.log');
-		$this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+		$this->assertContains('Debug: ' . $testMessage, $contents);
 
 		if (file_exists(LOGS . 'spam.log')) {
 			unlink(LOGS . 'spam.log');
@@ -256,10 +256,10 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test enable
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testStreamEnable() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::config('spam', array(
 			'engine' => 'File',
 			'file' => 'spam',
@@ -272,10 +272,10 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test disable
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testStreamDisable() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::config('spam', array(
 			'engine' => 'File',
 			'file' => 'spam',
@@ -290,20 +290,20 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test enabled() invalid stream
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testStreamEnabledInvalid() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::enabled('bogus_stream');
 	}
 
 /**
  * test disable invalid stream
  *
+ * @expectedException CakeLogException
  * @return void
  */
 	public function testStreamDisableInvalid() {
-		$this->expectException(CakeLogException::class);
 		CakeLog::disable('bogus_stream');
 	}
 
@@ -607,56 +607,56 @@ class CakeLogTest extends CakeTestCase {
 		$testMessage = 'emergency message';
 		CakeLog::emergency($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertMatchesRegularExpression('/(Emergency|Critical): ' . $testMessage . '/', $contents);
+		$this->assertRegExp('/(Emergency|Critical): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'alert message';
 		CakeLog::alert($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertMatchesRegularExpression('/(Alert|Critical): ' . $testMessage . '/', $contents);
+		$this->assertRegExp('/(Alert|Critical): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'critical message';
 		CakeLog::critical($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString('Critical: ' . $testMessage, $contents);
+		$this->assertContains('Critical: ' . $testMessage, $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'error message';
 		CakeLog::error($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString('Error: ' . $testMessage, $contents);
+		$this->assertContains('Error: ' . $testMessage, $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'warning message';
 		CakeLog::warning($testMessage);
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString('Warning: ' . $testMessage, $contents);
+		$this->assertContains('Warning: ' . $testMessage, $contents);
 		$this->assertFalse(file_exists(LOGS . 'debug.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'notice message';
 		CakeLog::notice($testMessage);
 		$contents = file_get_contents(LOGS . 'debug.log');
-		$this->assertMatchesRegularExpression('/(Notice|Debug): ' . $testMessage . '/', $contents);
+		$this->assertRegExp('/(Notice|Debug): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'info message';
 		CakeLog::info($testMessage);
 		$contents = file_get_contents(LOGS . 'debug.log');
-		$this->assertMatchesRegularExpression('/(Info|Debug): ' . $testMessage . '/', $contents);
+		$this->assertRegExp('/(Info|Debug): ' . $testMessage . '/', $contents);
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 		$this->_deleteLogs();
 
 		$testMessage = 'debug message';
 		CakeLog::debug($testMessage);
 		$contents = file_get_contents(LOGS . 'debug.log');
-		$this->assertStringContainsString('Debug: ' . $testMessage, $contents);
+		$this->assertContains('Debug: ' . $testMessage, $contents);
 		$this->assertFalse(file_exists(LOGS . 'error.log'));
 		$this->_deleteLogs();
 	}
@@ -709,7 +709,7 @@ class CakeLogTest extends CakeTestCase {
 		CakeLog::defaultLevels();
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		$contents = file_get_contents(LOGS . 'error.log');
-		$this->assertStringContainsString('Error: ' . $testMessage, $contents);
+		$this->assertContains('Error: ' . $testMessage, $contents);
 
 		CakeLog::config('spam', array(
 			'engine' => 'File',
@@ -728,15 +728,15 @@ class CakeLogTest extends CakeTestCase {
 		$this->assertTrue(file_exists(LOGS . 'spam.log'));
 		$this->assertTrue(file_exists(LOGS . 'eggs.log'));
 		$contents = file_get_contents(LOGS . 'spam.log');
-		$this->assertStringContainsString('Spam: ' . $testMessage, $contents);
+		$this->assertContains('Spam: ' . $testMessage, $contents);
 
 		$testMessage = 'egg message';
 		CakeLog::write('eggs', $testMessage);
 		CakeLog::defaultLevels();
 		$contents = file_get_contents(LOGS . 'spam.log');
-		$this->assertStringNotContainsString('Eggs: ' . $testMessage, $contents);
+		$this->assertNotContains('Eggs: ' . $testMessage, $contents);
 		$contents = file_get_contents(LOGS . 'eggs.log');
-		$this->assertStringContainsString('Eggs: ' . $testMessage, $contents);
+		$this->assertContains('Eggs: ' . $testMessage, $contents);
 
 		CakeLog::drop('spam');
 		CakeLog::drop('eggs');

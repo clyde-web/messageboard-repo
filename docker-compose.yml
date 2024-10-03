@@ -22,4 +22,4 @@ services:
             MYSQL_ROOT_PASSWORD: cde3bgt5_root
             MYSQL_USER: ncwww
             MYSQL_PASSWORD: cde3bgt5
-            MYSQL_DATABASE: employees
+            MYSQL_DATABASE: messageBoard

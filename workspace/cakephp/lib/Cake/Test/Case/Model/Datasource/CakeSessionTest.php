@@ -84,7 +84,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function setupBeforeClass() : void {
+	public static function setupBeforeClass() {
 		// Make sure garbage colector will be called
 		static::$_gcDivisor = ini_get('session.gc_divisor');
 		ini_set('session.gc_divisor', '1');
@@ -95,7 +95,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function teardownAfterClass() : void {
+	public static function teardownAfterClass() {
 		// Revert to the default setting
 		ini_set('session.gc_divisor', static::$_gcDivisor);
 	}
@@ -105,7 +105,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Session', array(
 			'defaults' => 'php',
@@ -121,7 +121,7 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		if (TestCakeSession::started()) {
 			session_write_close();
 		}

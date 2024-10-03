@@ -30,7 +30,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return Mock object
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->Error = $this->getMock('ConsoleErrorHandler', array('_stop'));
 		ConsoleErrorHandler::$stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
@@ -41,7 +41,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		unset($this->Error);
 		parent::tearDown();
 	}

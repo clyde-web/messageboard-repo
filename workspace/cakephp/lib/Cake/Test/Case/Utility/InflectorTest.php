@@ -86,7 +86,7 @@ class InflectorTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		Inflector::reset();
 	}

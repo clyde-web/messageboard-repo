@@ -30,7 +30,7 @@ class ModelValidationTest extends BaseModelTest {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
 	}
@@ -772,10 +772,10 @@ class ModelValidationTest extends BaseModelTest {
  * Test that missing validation methods trigger errors in development mode.
  * Helps to make development easier.
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  */
 	public function testMissingValidationErrorTriggering() {
-		$this->expectWarning();
 		Configure::write('debug', 2);
 
 		$TestModel = new ValidationTest1();
@@ -2226,16 +2226,16 @@ class ModelValidationTest extends BaseModelTest {
 /**
  * Test that type hint exception is thrown
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
- * @throws \PHPUnit\Framework\Error
+ * @throws PHPUnit_Framework_Error
  */
 	public function testValidatorTypehintException() {
-		$this->expectException(\PHPUnit\Framework\Error::class);
 		try {
 			new ModelValidator('asdasds');
 			$this->fail('No exeption raised');
 		} catch (TypeError $e) {
-			throw new \PHPUnit\Framework\Error('Raised an error', 100);
+			throw new PHPUnit_Framework_Error('Raised an error', 100, __FILE__, __LINE__);
 		}
 	}
 

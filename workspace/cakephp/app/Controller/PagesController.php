@@ -78,16 +78,9 @@ class PagesController extends AppController {
 		}
 	}
 
-	public function sample(){
-		echo "hello world!";
-		die();
-	}
-
-	public function home () {
-		echo "home";
-		die();
-	}
-
-	public function lazada () {
+	public function notFound() {
+		$this->response->statusCode(404);
+		$this->set('title_for_layout', 'Page Not Found');
+		$this->render('/Errors/error404');
 	}
 }

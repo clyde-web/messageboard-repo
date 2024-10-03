@@ -1803,9 +1803,6 @@ class FormHelper extends AppHelper {
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
 			$this->_secure($secure, array_merge($field, array($suffix)));
 		}
-		if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
-			$this->_secure($secure, array_merge($field, array('full_path')));
-		}
 
 		$exclude = array('name' => null, 'value' => null);
 		return $this->Html->useTag('file', $options['name'], array_diff_key($options, $exclude));
@@ -2708,7 +2705,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$selects = array();
-		foreach (preg_split('//', (string)$dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
+		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 			switch ($char) {
 				case 'Y':
 					$attrs['Year']['value'] = $year;
@@ -2767,9 +2764,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (is_numeric($value)) {
-			// @codingStandardsIgnoreStart
-			$value = @strftime('%Y-%m-%d %H:%M:%S', $value);
-			// @codingStandardsIgnoreEnd
+			$value = strftime('%Y-%m-%d %H:%M:%S', $value);
 		}
 		$meridian = 'am';
 		$pos = strpos($value, '-');
@@ -3023,9 +3018,7 @@ class FormHelper extends AppHelper {
 					$data = $options['monthNames'];
 				} else {
 					for ($m = 1; $m <= 12; $m++) {
-						// @codingStandardsIgnoreStart
-						$data[sprintf("%02s", $m)] = @strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
-						// @codingStandardsIgnoreEnd
+						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
 					}
 				}
 				break;

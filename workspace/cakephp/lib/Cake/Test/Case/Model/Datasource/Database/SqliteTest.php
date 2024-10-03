@@ -91,7 +91,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
@@ -105,7 +105,7 @@ class SqliteTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		Configure::write('Cache.disable', false);
 	}
@@ -499,7 +499,7 @@ SQL;
 			'testdescribes' => $result
 		));
 		$result = $this->Dbo->createSchema($schema);
-		$this->assertStringContainsString('"limit_date" timestamp NOT NULL', $result);
+		$this->assertContains('"limit_date" timestamp NOT NULL', $result);
 	}
 
 /**
@@ -596,7 +596,7 @@ SQL;
 
 		$result = $db->limit(10, 300000000000000000000000000000);
 		$scientificNotation = sprintf('%.1E', 300000000000000000000000000000);
-		$this->assertStringNotContainsString($scientificNotation, $result);
+		$this->assertNotContains($scientificNotation, $result);
 	}
 
 /**

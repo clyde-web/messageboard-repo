@@ -750,7 +750,7 @@ class CakeRequest implements ArrayAccess {
 	public function here($base = true) {
 		$url = $this->here;
 		if (!empty($this->query)) {
-			$url .= '?' . http_build_query($this->query, "", '&');
+			$url .= '?' . http_build_query($this->query, null, '&');
 		}
 		if (!$base) {
 			$url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);
@@ -1113,10 +1113,10 @@ class CakeRequest implements ArrayAccess {
 /**
  * Array access read implementation
  *
- * @param mixed $name Name of the key being accessed.
+ * @param string $name Name of the key being accessed.
  * @return mixed
  */
-	public function offsetGet(mixed $name) : mixed {
+	public function offsetGet($name) {
 		if (isset($this->params[$name])) {
 			return $this->params[$name];
 		}
@@ -1132,21 +1132,21 @@ class CakeRequest implements ArrayAccess {
 /**
  * Array access write implementation
  *
- * @param mixed $name Name of the key being written
+ * @param string $name Name of the key being written
  * @param mixed $value The value being written.
  * @return void
  */
-	public function offsetSet(mixed $name, mixed $value) : void {
+	public function offsetSet($name, $value) {
 		$this->params[$name] = $value;
 	}
 
 /**
  * Array access isset() implementation
  *
- * @param mixed $name thing to check.
+ * @param string $name thing to check.
  * @return bool
  */
-	public function offsetExists(mixed $name) : bool {
+	public function offsetExists($name) {
 		if ($name === 'url' || $name === 'data') {
 			return true;
 		}
@@ -1159,7 +1159,7 @@ class CakeRequest implements ArrayAccess {
  * @param string $name Name to unset.
  * @return void
  */
-	public function offsetUnset(mixed $name) : void {
+	public function offsetUnset($name) {
 		unset($this->params[$name]);
 	}
 

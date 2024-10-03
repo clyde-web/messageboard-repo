@@ -56,7 +56,7 @@ class ApplicationControllerTest extends ControllerTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		CakeSession::destroy();
 		parent::setUp();
 	}
@@ -66,7 +66,7 @@ class ApplicationControllerTest extends ControllerTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		CakeSession::destroy();
 		parent::tearDown();
 	}
@@ -79,7 +79,7 @@ class ApplicationControllerTest extends ControllerTestCase {
 	public function testRedirect() {
 		$sessionId = 'o7k64tlhil9pakp89j6d8ovlqk';
 		$this->testAction('/trans_session_id/next?CAKEPHP=' . $sessionId);
-		$this->assertStringContainsString('/trans_session_id/next_step?CAKEPHP=' . $sessionId, $this->headers['Location']);
+		$this->assertContains('/trans_session_id/next_step?CAKEPHP=' . $sessionId, $this->headers['Location']);
 		$expectedConfig = array(
 			'cookie' => 'CAKEPHP',
 			'timeout' => 240,

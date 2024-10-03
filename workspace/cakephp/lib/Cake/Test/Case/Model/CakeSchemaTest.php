@@ -452,7 +452,7 @@ class CakeSchemaTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		ConnectionManager::getDataSource('test')->cacheSources = false;
 		$this->Schema = new TestAppSchema();
@@ -463,7 +463,7 @@ class CakeSchemaTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		if (file_exists(TMP . 'tests' . DS . 'schema.php')) {
 			unlink(TMP . 'tests' . DS . 'schema.php');
@@ -736,7 +736,7 @@ class CakeSchemaTest extends CakeTestCase {
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
 		$result = $this->Schema->generateTable('posts', $posts);
-		$this->assertMatchesRegularExpression('/public \$posts/', $result);
+		$this->assertRegExp('/public \$posts/', $result);
 
 		$posts = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -752,8 +752,8 @@ class CakeSchemaTest extends CakeTestCase {
 			)
 		);
 		$result = $this->Schema->generateTable('fields', $posts);
-		$this->assertMatchesRegularExpression('/public \$fields/', $result);
-		$this->assertMatchesRegularExpression('/\'type\' \=\> \'fulltext\'/', $result);
+		$this->assertRegExp('/public \$fields/', $result);
+		$this->assertRegExp('/\'type\' \=\> \'fulltext\'/', $result);
 	}
 
 /**
@@ -1154,11 +1154,11 @@ class CakeSchemaTest extends CakeTestCase {
 		$col = $Schema->tables['testdescribes']['int_null'];
 		$col['name'] = 'int_null';
 		$column = $this->db->buildColumn($col);
-		$this->assertMatchesRegularExpression('/' . preg_quote($column, '/') . '/', $sql);
+		$this->assertRegExp('/' . preg_quote($column, '/') . '/', $sql);
 
 		$col = $Schema->tables['testdescribes']['int_not_null'];
 		$col['name'] = 'int_not_null';
 		$column = $this->db->buildColumn($col);
-		$this->assertMatchesRegularExpression('/' . preg_quote($column, '/') . '/', $sql);
+		$this->assertRegExp('/' . preg_quote($column, '/') . '/', $sql);
 	}
 }

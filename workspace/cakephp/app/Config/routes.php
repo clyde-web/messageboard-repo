@@ -25,19 +25,25 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
-	Router::connect('/', array('controller' => 'Home', 'action' => 'main', 'home'));	
-	Router::connect('/posts', array('controller' => 'Posts', 'action' => 'index'));	
-	Router::connect('/tab_page/*', array('controller' => 'Home', 'action' => 'tab'));	
-	Router::connect('/work-experience', array('controller' => 'WorkExperience', 'action' => 'index'));
-	Router::connect('/about-me', array('controller' => 'AboutMe', 'action' => 'index'));
-	Router::connect('/photo-gallery', array('controller' => 'PhotoGallery', 'action' => 'index'));
-	Router::connect('/contact-me/*', array('controller' => 'ContactMe', 'action' => 'index'));
-
+	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+	Router::connect('/messages', array('controller' => 'messages', 'action' => 'index'));
+	Router::connect('/messages/create', array('controller' => 'messages', 'action' => 'create'));
+	Router::connect('messages/view/:id', array('controller' => 'messages', 'action' => 'view'));
+	Router::connect('messages/delete', array('controller' => 'messages', 'action' => 'delete'));
+	Router::connect('messages/sendMessage', array('controller' => 'messages', 'action' => 'sendMessage'));
+	Router::connect('messages/deleteMessage', array('controller' => 'messages', 'action' => 'deleteMessage'));
+	Router::connect('messages/searchMessage', array('controller' => 'messages', 'action' => 'searchMessage'));
+	Router::connect('/users/login', array('controller' => 'users', 'action' => 'login'));
+	Router::connect('/users/register', array('controller' => 'users', 'action' => 'register'));
+	Router::connect('/users/logout', array('controller' => 'users', 'action' => 'logout'));
+	Router::connect('/users/profile/*', array('controller' => 'users', 'action' => 'profile'));
+	Router::connect('/users/edit', array('controller' => 'users', 'action' => 'edit'));
+	Router::connect('/users/change-password', array('controller' => 'users', 'action' => 'password'));
+	Router::connect('/users/search', array('controller' => 'users', 'action' => 'search'));
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
-
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

@@ -109,7 +109,7 @@ class ShellDispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		App::build(array(
 			'Plugin' => array(
@@ -127,7 +127,7 @@ class ShellDispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
 	}

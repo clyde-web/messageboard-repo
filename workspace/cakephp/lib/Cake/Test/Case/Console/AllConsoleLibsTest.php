@@ -23,7 +23,7 @@
  *
  * @package       Cake.Test.Case.Console
  */
-class AllConsoleLibsTest extends \PHPUnit\Framework\TestSuite {
+class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.

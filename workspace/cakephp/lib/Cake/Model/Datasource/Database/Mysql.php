@@ -333,7 +333,7 @@ class Mysql extends DboSource {
  * Returns an array of the fields in given table name.
  *
  * @param Model|string $model Name of database table to inspect or model instance
- * @return array|bool Fields in table. Keys are name and type. Returns false if result is empty.
+ * @return array Fields in table. Keys are name and type
  * @throws CakeException
  */
 	public function describe($model) {
@@ -344,7 +344,7 @@ class Mysql extends DboSource {
 		}
 		$table = $this->fullTableName($model);
 
-		$fields = array();
+		$fields = false;
 		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $table);
 		if (!$cols) {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
@@ -361,8 +361,7 @@ class Mysql extends DboSource {
 				$fields[$column->Field]['unsigned'] = $this->_unsigned($column->Type);
 			}
 			if (in_array($fields[$column->Field]['type'], array('timestamp', 'datetime')) &&
-				//Falling back to default empty string due to PHP8.1 deprecation notice.
-				in_array(strtoupper($column->Default ?? ""), array('CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP()'))
+				in_array(strtoupper($column->Default), array('CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP()'))
 			) {
 				$fields[$column->Field]['default'] = null;
 			}
@@ -383,12 +382,6 @@ class Mysql extends DboSource {
 		}
 		$this->_cacheDescription($key, $fields);
 		$cols->closeCursor();
-
-		//Fields must be an array for compatibility with PHP8.1 (deprecation notice) but also let's keep backwards compatibility for method.
-		if (count($fields) === 0) {
-			return false;
-		}
-
 		return $fields;
 	}
 
@@ -838,7 +831,7 @@ class Mysql extends DboSource {
  */
 	public function value($data, $column = null, $null = true) {
 		$value = parent::value($data, $column, $null);
-		if (is_numeric($value) && $column !== null && str_starts_with($column, 'set')) {
+		if (is_numeric($value) && substr($column, 0, 3) === 'set') {
 			return $this->_connection->quote($value);
 		}
 		return $value;

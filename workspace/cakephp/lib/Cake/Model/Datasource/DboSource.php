@@ -488,7 +488,7 @@ class DboSource extends DataSource {
  */
 	protected function _execute($sql, $params = array(), $prepareOptions = array()) {
 		$sql = trim($sql);
-		if (preg_match('/^(?:CREATE|ALTER|DROP)\s+(?:UNIQUE\s+)?(?:TABLE|INDEX)/i', $sql)) {
+		if (preg_match('/^(?:CREATE|ALTER|DROP)\s+(?:TABLE|INDEX)/i', $sql)) {
 			$statements = array_filter(explode(';', $sql));
 			if (count($statements) > 1) {
 				$result = array_map(array($this, '_execute'), $statements);
@@ -2070,8 +2070,7 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function renderJoinStatement($data) {
-		//Fixed deprecation notice in PHP8.1 - fallback to empty string
-		if (strtoupper($data['type'] ?? "") === 'CROSS' || empty($data['conditions'])) {
+		if (strtoupper($data['type']) === 'CROSS' || empty($data['conditions'])) {
 			return "{$data['type']} JOIN {$data['table']} {$data['alias']}";
 		}
 		return trim("{$data['type']} JOIN {$data['table']} {$data['alias']} ON ({$data['conditions']})");
@@ -3270,14 +3269,13 @@ class DboSource extends DataSource {
 		}
 		$sign = isset($result[3]);
 
-		if ($length === null) {
-			// prevent deprecation warnings
-			return null;
-		}
-
 		$isFloat = in_array($type, array('dec', 'decimal', 'float', 'numeric', 'double'));
 		if ($isFloat && strpos($length, ',') !== false) {
 			return $length;
+		}
+
+		if ($length === null) {
+			return null;
 		}
 
 		if (isset($types[$type])) {

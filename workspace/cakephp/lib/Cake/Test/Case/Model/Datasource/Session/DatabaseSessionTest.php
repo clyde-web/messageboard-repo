@@ -53,7 +53,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function setupBeforeClass() : void {
+	public static function setupBeforeClass() {
 		static::$_sessionBackup = Configure::read('Session');
 		Configure::write('Session.handler', array(
 			'model' => 'SessionTestModel',
@@ -66,7 +66,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public static function teardownAfterClass() : void {
+	public static function teardownAfterClass() {
 		Configure::write('Session', static::$_sessionBackup);
 	}
 
@@ -75,7 +75,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->storage = new DatabaseSession();
 	}
@@ -85,7 +85,7 @@ class DatabaseSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		unset($this->storage);
 		ClassRegistry::flush();
 		parent::tearDown();

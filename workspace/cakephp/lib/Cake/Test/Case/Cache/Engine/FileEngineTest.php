@@ -37,7 +37,7 @@ class FileEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('Cache.disable', false);
 		Cache::config('file_test', array('engine' => 'File', 'path' => CACHE));
@@ -48,7 +48,7 @@ class FileEngineTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		// Cache::clear(false, 'file_test');
 		Cache::drop('file_test');

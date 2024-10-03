@@ -470,8 +470,7 @@ class CakeRoute {
 		//check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $key => $pattern) {
-				//Fixing deprecation notice about null $subject in PHP8.1.
-				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key] ?? "")) {
+				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
 					return false;
 				}
 			}
@@ -498,7 +497,7 @@ class CakeRoute {
 		}
 
 		if (is_array($params['pass'])) {
-			$params['pass'] = implode('/', array_map(fn($param) => rawurlencode((string)$param), $params['pass']));
+			$params['pass'] = implode('/', array_map('rawurlencode', $params['pass']));
 		}
 
 		$namedConfig = Router::namedConfig();

@@ -149,7 +149,7 @@ class CacheHelper extends AppHelper {
 			$cacheTime = $cacheAction;
 		}
 
-		if ($cacheTime && ($cacheTime > 0 || isset(date_parse($cacheTime)['relative']))) {
+		if ($cacheTime && $cacheTime > 0) {
 			$cached = $this->_parseOutput($out);
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);

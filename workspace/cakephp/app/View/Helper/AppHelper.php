@@ -30,4 +30,18 @@ App::uses('Helper', 'View');
  * @package       app.View.Helper
  */
 class AppHelper extends Helper {
+    public $helpers = array('Html');
+
+    public function isActive($uri) {
+        return $this->request->here === $this->Html->url($uri) ? 'fw-bold' : null;
+    }
+
+    public function getProfile($id) {
+        $path = WWW_ROOT . 'img/profiles/' . $id . '.png';
+        $file = 'profiles/' . $id . '.png';
+        if (!file_exists($path)) {
+            $file = 'default.jpg';
+        }
+        return $file;
+    }
 }

@@ -40,7 +40,7 @@ class DebuggerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		Configure::write('debug', 2);
 		Configure::write('log', false);
@@ -51,7 +51,7 @@ class DebuggerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		Configure::write('log', true);
 		if ($this->_restoreError) {
@@ -80,20 +80,20 @@ class DebuggerTest extends CakeTestCase {
 		$result = Debugger::excerpt(__FILE__, __LINE__, 2);
 		$this->assertTrue(is_array($result));
 		$this->assertEquals(5, count($result));
-		$this->assertMatchesRegularExpression('/function(.+)testExcerpt/', $result[1]);
+		$this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
 		$result = Debugger::excerpt(__FILE__, 2, 2);
 		$this->assertTrue(is_array($result));
 		$this->assertEquals(4, count($result));
 
 		$pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
-		$this->assertMatchesRegularExpression($pattern, $result[0]);
+		$this->assertRegExp($pattern, $result[0]);
 
 		$result = Debugger::excerpt(__FILE__, 11, 2);
 		$this->assertEquals(5, count($result));
 
 		$pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
-		$this->assertMatchesRegularExpression($pattern, $result[0]);
+		$this->assertRegExp($pattern, $result[0]);
 
 		$return = Debugger::excerpt('[internal]', 2, 2);
 		$this->assertTrue(empty($return));
@@ -105,16 +105,6 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	public function testOutput() {
-		// In PHP8.0+,
-		// the errcontext argument will no longer be passed to custom error handlers set with set_error_handler().
-		// see: https://www.php.net/manual/en/migration80.incompatible.php
-		// Therefore, the contents of the Context (variables that existed in the scope the error was triggered in)
-		// are not output when a PHP error occurs.
-		// Except for the above, Debugger::output() works.
-		// However, it is incomplete, so marked.
-		if (PHP_MAJOR_VERSION >= 8) {
-			$this->markTestIncomplete('Context output no longer works in PHP 8.0+.');
-		}
 		set_error_handler('Debugger::showError');
 		$this->_restoreError = true;
 
@@ -124,25 +114,25 @@ class DebuggerTest extends CakeTestCase {
 		$result = Debugger::output(true);
 
 		$this->assertEquals('Notice', $result[0]['error']);
-		$this->assertMatchesRegularExpression('/Undefined variable\:\s+out/', $result[0]['description']);
-		$this->assertMatchesRegularExpression('/DebuggerTest::testOutput/i', $result[0]['trace']);
+		$this->assertRegExp('/Undefined variable\:\s+out/', $result[0]['description']);
+		$this->assertRegExp('/DebuggerTest::testOutput/i', $result[0]['trace']);
 
 		ob_start();
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
 
-		$this->assertMatchesRegularExpression('/Undefined variable:\s+other/', $result);
-		$this->assertMatchesRegularExpression('/Context:/', $result);
-		$this->assertMatchesRegularExpression('/DebuggerTest::testOutput/i', $result);
+		$this->assertRegExp('/Undefined variable:\s+other/', $result);
+		$this->assertRegExp('/Context:/', $result);
+		$this->assertRegExp('/DebuggerTest::testOutput/i', $result);
 
 		ob_start();
 		Debugger::output('html');
 		$wrong .= '';
 		$result = ob_get_clean();
-		$this->assertMatchesRegularExpression('/<pre class="cake-error">.+<\/pre>/', $result);
-		$this->assertMatchesRegularExpression('/<b>Notice<\/b>/', $result);
-		$this->assertMatchesRegularExpression('/variable:\s+wrong/', $result);
+		$this->assertRegExp('/<pre class="cake-error">.+<\/pre>/', $result);
+		$this->assertRegExp('/<b>Notice<\/b>/', $result);
+		$this->assertRegExp('/variable:\s+wrong/', $result);
 
 		ob_start();
 		Debugger::output('js');
@@ -159,10 +149,10 @@ class DebuggerTest extends CakeTestCase {
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
 
-		$this->assertMatchesRegularExpression('/Undefined variable:\s+buzz/', $result[1]);
-		$this->assertMatchesRegularExpression('/<a[^>]+>Code/', $result[1]);
-		$this->assertMatchesRegularExpression('/<a[^>]+>Context/', $result[2]);
-		$this->assertStringContainsString('$wrong = &#039;&#039;', $result[3], 'Context should be HTML escaped.');
+		$this->assertRegExp('/Undefined variable:\s+buzz/', $result[1]);
+		$this->assertRegExp('/<a[^>]+>Code/', $result[1]);
+		$this->assertRegExp('/<a[^>]+>Context/', $result[2]);
+		$this->assertContains('$wrong = &#039;&#039;', $result[3], 'Context should be HTML escaped.');
 	}
 
 /**
@@ -175,13 +165,12 @@ class DebuggerTest extends CakeTestCase {
 		$this->_restoreError = true;
 
 		ob_start();
-		Debugger::output('js');
 		$a = array();
 		$b = $a['<script>alert(1)</script>'];
 		$result = ob_get_clean();
 
-		$this->assertStringNotContainsString('<script>alert(1)', $result);
-		$this->assertStringContainsString('&lt;script&gt;alert(1)', $result);
+		$this->assertNotContains('<script>alert(1)', $result);
+		$this->assertContains('&lt;script&gt;alert(1)', $result);
 	}
 
 /**
@@ -197,9 +186,8 @@ class DebuggerTest extends CakeTestCase {
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
 				'&line={:line}">{:path}</a>, line {:line}'
 		));
-		Debugger::output('js');
 		$result = Debugger::trace();
-		$this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+		$this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -215,10 +203,10 @@ class DebuggerTest extends CakeTestCase {
 
 		$data = array(
 			'error' => array(),
-			'code' => array(), '2', '/code',
+			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
 			'line' => array(), '' . ((int)__LINE__ - 7), '/line',
-			'preg:/Undefined variable\s+\$foo/',
+			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
@@ -237,10 +225,10 @@ class DebuggerTest extends CakeTestCase {
 /**
  * Test that choosing a non-existent format causes an exception
  *
+ * @expectedException CakeException
  * @return void
  */
 	public function testOutputAsException() {
-		$this->expectException(CakeException::class);
 		Debugger::outputAs('Invalid junk');
 	}
 
@@ -260,7 +248,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::outputAs('js');
 
 		$result = Debugger::trace();
-		$this->assertMatchesRegularExpression('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
+		$this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
 
 		Debugger::addFormat('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
@@ -274,10 +262,10 @@ class DebuggerTest extends CakeTestCase {
 
 		$data = array(
 			'<error',
-			'<code', '2', '/code',
+			'<code', '8', '/code',
 			'<file', 'preg:/[^<]+/', '/file',
 			'<line', '' . ((int)__LINE__ - 7), '/line',
-			'preg:/Undefined variable\s+\$foo/',
+			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
@@ -298,8 +286,8 @@ class DebuggerTest extends CakeTestCase {
 		ob_start();
 		$foo .= '';
 		$result = ob_get_clean();
-		$this->assertStringContainsString('Warning: I eated an error', $result);
-		$this->assertStringContainsString('DebuggerTest.php', $result);
+		$this->assertContains('Notice: I eated an error', $result);
+		$this->assertContains('DebuggerTest.php', $result);
 	}
 
 /**
@@ -488,18 +476,18 @@ TEXT;
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertStringContainsString('DebuggerTest::testLog', $result);
-		$this->assertStringContainsString("'cool'", $result);
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertContains("'cool'", $result);
 
 		unlink(LOGS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertStringContainsString('DebuggerTest::testLog', $result);
-		$this->assertStringContainsString('[main]', $result);
-		$this->assertStringContainsString('array', $result);
-		$this->assertStringContainsString("'whatever',", $result);
-		$this->assertStringContainsString("'here'", $result);
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertContains('[main]', $result);
+		$this->assertContains('array', $result);
+		$this->assertContains("'whatever',", $result);
+		$this->assertContains("'here'", $result);
 	}
 
 /**
@@ -518,8 +506,8 @@ TEXT;
 		);
 		Debugger::log($val, LOG_DEBUG, 0);
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertStringContainsString('DebuggerTest::testLog', $result);
-		$this->assertStringNotContainsString("/'val'/", $result);
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertNotContains("/'val'/", $result);
 
 		unlink(LOGS . 'debug.log');
 	}
@@ -642,12 +630,8 @@ TEXT;
  * @return void
  */
 	public function testExportVarRecursion() {
-		$this->skipIf(
-			version_compare(PHP_VERSION, '8.1.0', '>='),
-			'PHP 8.1+, $GLOBALS no longer has $GLOBALS as an element.'
-		);
 		$output = Debugger::exportVar($GLOBALS);
-		$this->assertStringContainsString("'GLOBALS' => [recursion]", $output);
+		$this->assertContains("'GLOBALS' => [recursion]", $output);
 	}
 
 /**
@@ -657,11 +641,11 @@ TEXT;
  */
 	public function testTraceExclude() {
 		$result = Debugger::trace();
-		$this->assertMatchesRegularExpression('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertRegExp('/^DebuggerTest::testTraceExclude/', $result);
 
 		$result = Debugger::trace(array(
 			'exclude' => array('DebuggerTest::testTraceExclude')
 		));
-		$this->assertDoesNotMatchRegularExpression('/^DebuggerTest::testTraceExclude/', $result);
+		$this->assertNotRegExp('/^DebuggerTest::testTraceExclude/', $result);
 	}
 }

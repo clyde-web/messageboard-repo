@@ -390,7 +390,7 @@ class ControllerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		App::objects('plugin', null, false);
 		App::build();
@@ -402,7 +402,7 @@ class ControllerTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
 	}
@@ -573,7 +573,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$Controller->flash('this should work', '/flash', 1, 'ajax2');
 		$result = $Controller->response->body();
-		$this->assertMatchesRegularExpression('/Ajax!/', $result);
+		$this->assertRegExp('/Ajax!/', $result);
 		App::build();
 	}
 
@@ -635,14 +635,14 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 
 		$result = $Controller->render('index');
-		$this->assertMatchesRegularExpression('/posts index/', (string)$result);
+		$this->assertRegExp('/posts index/', (string)$result);
 
 		$Controller->view = 'index';
 		$result = $Controller->render();
-		$this->assertMatchesRegularExpression('/posts index/', (string)$result);
+		$this->assertRegExp('/posts index/', (string)$result);
 
 		$result = $Controller->render('/Elements/test_element');
-		$this->assertMatchesRegularExpression('/this is the test element/', (string)$result);
+		$this->assertRegExp('/this is the test element/', (string)$result);
 		$Controller->view = null;
 
 		$Controller = new TestController($request, new CakeResponse());
@@ -688,7 +688,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'Posts';
 		$Controller->theme = 'TestTheme';
 		$result = $Controller->render('index');
-		$this->assertMatchesRegularExpression('/default test_theme layout/', (string)$result);
+		$this->assertRegExp('/default test_theme layout/', (string)$result);
 		App::build();
 	}
 
@@ -1208,11 +1208,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test postConditions raising an exception on unsafe keys.
  *
+ * @expectedException RuntimeException
  * @dataProvider dangerousPostConditionsProvider
  * @return void
  */
 	public function testPostConditionsDangerous($data) {
-		$this->expectException(RuntimeException::class);
 		$request = new CakeRequest('controller_posts/index');
 
 		$Controller = new Controller($request);
@@ -1246,24 +1246,16 @@ class ControllerTest extends CakeTestCase {
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('CakeEvent'),
-					$this->callback(function (CakeEvent $event) {
-						return $event->name() === 'Controller.initialize';
-					}),
-					$this->callback(function (CakeEvent $event) use ($Controller) {
-						return $event->subject() === $Controller;
-					}),
+					$this->attributeEqualTo('_name', 'Controller.initialize'),
+					$this->attributeEqualTo('_subject', $Controller)
 				)
 			);
 		$eventManager->expects($this->at(1))->method('dispatch')
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('CakeEvent'),
-					$this->callback(function (CakeEvent $event) {
-						return $event->name() === 'Controller.startup';
-					}),
-					$this->callback(function (CakeEvent $event) use ($Controller) {
-						return $event->subject() === $Controller;
-					}),
+					$this->attributeEqualTo('_name', 'Controller.startup'),
+					$this->attributeEqualTo('_subject', $Controller)
 				)
 			);
 		$Controller->expects($this->exactly(2))->method('getEventManager')
@@ -1301,12 +1293,8 @@ class ControllerTest extends CakeTestCase {
 			->with(
 				$this->logicalAnd(
 					$this->isInstanceOf('CakeEvent'),
-					$this->callback(function (CakeEvent $event) {
-						return $event->name() === 'Controller.shutdown';
-					}),
-					$this->callback(function (CakeEvent $event) use ($Controller) {
-						return $event->subject() === $Controller;
-					}),
+					$this->attributeEqualTo('_name', 'Controller.shutdown'),
+					$this->attributeEqualTo('_subject', $Controller)
 				)
 			);
 		$Controller->expects($this->once())->method('getEventManager')
@@ -1418,11 +1406,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * testMissingAction method
  *
+ * @expectedException MissingActionException
+ * @expectedExceptionMessage Action TestController::missing() could not be found.
  * @return void
  */
 	public function testInvokeActionMissingAction() {
-		$this->expectException(MissingActionException::class);
-		$this->expectExceptionMessage("Action TestController::missing() could not be found.");
 		$url = new CakeRequest('test/missing');
 		$url->addParams(array('controller' => 'test_controller', 'action' => 'missing'));
 		$response = $this->getMock('CakeResponse');
@@ -1434,11 +1422,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking private methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionPrivate() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::private_m() is not directly accessible.");
 		$url = new CakeRequest('test/private_m/');
 		$url->addParams(array('controller' => 'test_controller', 'action' => 'private_m'));
 		$response = $this->getMock('CakeResponse');
@@ -1450,11 +1438,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking protected methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionProtected() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::protected_m() is not directly accessible.");
 		$url = new CakeRequest('test/protected_m/');
 		$url->addParams(array('controller' => 'test_controller', 'action' => 'protected_m'));
 		$response = $this->getMock('CakeResponse');
@@ -1466,11 +1454,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking hidden methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionHidden() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::_hidden() is not directly accessible.");
 		$url = new CakeRequest('test/_hidden/');
 		$url->addParams(array('controller' => 'test_controller', 'action' => '_hidden'));
 		$response = $this->getMock('CakeResponse');
@@ -1482,11 +1470,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking controller methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionBaseMethods() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::redirect() is not directly accessible.");
 		$url = new CakeRequest('test/redirect/');
 		$url->addParams(array('controller' => 'test_controller', 'action' => 'redirect'));
 		$response = $this->getMock('CakeResponse');
@@ -1498,11 +1486,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking controller methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionPrefixProtection() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::admin_add() is not directly accessible.");
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 
@@ -1517,11 +1505,11 @@ class ControllerTest extends CakeTestCase {
 /**
  * test invoking controller methods.
  *
+ * @expectedException PrivateActionException
+ * @expectedExceptionMessage Private Action TestController::Admin_add() is not directly accessible.
  * @return void
  */
 	public function testInvokeActionPrefixProtectionCasing() {
-		$this->expectException(PrivateActionException::class);
-		$this->expectExceptionMessage("Private Action TestController::Admin_add() is not directly accessible.");
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 

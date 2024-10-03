@@ -212,7 +212,7 @@ class ShellDispatcher {
 
 		$Shell = $this->_getShell($shell);
 
-		$command = '';
+		$command = null;
 		if (isset($this->args[0])) {
 			$command = $this->args[0];
 		}
@@ -292,7 +292,7 @@ class ShellDispatcher {
 		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
 		$isWin = false;
 		foreach ($defaults as $default => $value) {
-			if (!is_null($params[$default]) && strpos($params[$default], '\\') !== false) {
+			if (strpos($params[$default], '\\') !== false) {
 				$isWin = true;
 				break;
 			}

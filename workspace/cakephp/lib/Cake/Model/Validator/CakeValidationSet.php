@@ -307,20 +307,20 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 /**
  * Returns whether an index exists in the rule set
  *
- * @param mixed $index name of the rule
+ * @param string $index name of the rule
  * @return bool
  */
-	public function offsetExists(mixed $index) : bool {
+	public function offsetExists($index) {
 		return isset($this->_rules[$index]);
 	}
 
 /**
  * Returns a rule object by its index
  *
- * @param mixed $index name of the rule
+ * @param string $index name of the rule
  * @return CakeValidationRule
  */
-	public function offsetGet(mixed $index) : mixed {
+	public function offsetGet($index) {
 		return $this->_rules[$index];
 	}
 
@@ -335,7 +335,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * @return void
  * @see http://www.php.net/manual/en/arrayobject.offsetset.php
  */
-	public function offsetSet(mixed $index, mixed $rule) : void {
+	public function offsetSet($index, $rule) {
 		$this->setRule($index, $rule);
 	}
 
@@ -345,7 +345,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  * @param string $index name of the rule
  * @return void
  */
-	public function offsetUnset(mixed $index) : void {
+	public function offsetUnset($index) {
 		unset($this->_rules[$index]);
 	}
 
@@ -354,7 +354,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @return ArrayIterator
  */
-	public function getIterator() : Traversable {
+	public function getIterator() {
 		return new ArrayIterator($this->_rules);
 	}
 
@@ -363,7 +363,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @return int
  */
-	public function count() : int {
+	public function count() {
 		return count($this->_rules);
 	}
 

@@ -70,7 +70,7 @@ class DigestAuthenticationTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setUp() : void {
+	public function setUp() {
 		parent::setUp();
 		$this->HttpSocket = new DigestHttpSocket();
 		$this->HttpSocket->request['method'] = 'GET';
@@ -82,7 +82,7 @@ class DigestAuthenticationTest extends CakeTestCase {
  *
  * @return void
  */
-	public function tearDown() : void {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->HttpSocket);
 	}
@@ -121,7 +121,7 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$auth = array('user' => 'admin', 'pass' => '1234');
 		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$expected = '@Digest username="admin", realm="The batcave", nonce="4cded326c6c51", uri="/", response="[a-z0-9]{32}", qop="auth", nc=00000001, cnonce="[a-z0-9]+"@';
-		$this->assertMatchesRegularExpression($expected, $this->HttpSocket->request['header']['Authorization']);
+		$this->assertRegExp($expected, $this->HttpSocket->request['header']['Authorization']);
 		$this->assertEquals('auth', $auth['qop']);
 		$this->assertEquals(2, $auth['nc']);
 	}
