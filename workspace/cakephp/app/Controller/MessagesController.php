@@ -77,7 +77,6 @@ class MessagesController extends AppController {
                 );
             }
             $response = array(
-                'rooms' => $rooms,
                 'hasMore' => $hasMore,
                 'rooms' => $roomsAjax
             );
