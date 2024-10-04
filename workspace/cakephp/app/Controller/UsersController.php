@@ -168,6 +168,11 @@ class UsersController extends AppController {
                 );
             }
         }
-        echo json_encode(array('data' => $filteredUsers));
+        $response = array(
+            'data' => $filteredUsers
+        );
+        $this->response->type('json');
+        $this->response->body(json_encode($response));
+        return $response;
     }
 }
