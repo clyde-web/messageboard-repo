@@ -65,8 +65,11 @@ class User extends AppModel {
             'on' => 'update'
         ),
         'image' => array(
-            'rule' => array('extension', array('jpg', 'png', 'gif')),
-            'message' => 'Please upload an image with an extension of (jpg, png, gif)'
+            'extension' => array(
+                'rule' => array('checkExtension', array('jpg', 'png', 'gif')),
+                'message' => 'Please upload an image with an extension of (jpg, png, gif)',
+                'on' => 'update'
+            )
         )
     );
 
@@ -84,6 +87,15 @@ class User extends AppModel {
         ));
         if (!$user) { return false; }
         return $passwordHasher->check($check['old_password'], $user['User']['password']);
+    }
+
+    public function checkExtension($file, $options) {
+        if (!isset($file['image']['tmp_name']) || empty($file['image']['tmp_name'])) {
+            return true;
+        }
+
+        $ext = strtolower(pathinfo($file['image']['name'], PATHINFO_EXTENSION));
+        return in_array($ext, $options);
     }
 
     public function beforeSave($options = array()) {
