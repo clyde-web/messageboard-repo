@@ -57,7 +57,7 @@ class UsersController extends AppController {
         return $this->redirect($this->Auth->logout());
     }
 
-    public function profile($id = null) {
+    public function profile(int $id = null) {
         if (!$id) {
             $userId = $this->Auth->user('id');
         } else {
@@ -87,10 +87,9 @@ class UsersController extends AppController {
     public function edit() {
         if ($this->request->is(array('post', 'put'))) {
            $this->User->id = $this->Auth->user('id');
-           if (!empty($this->request->data['User']['image']['tmp_name'])) {
-                $file = $this->request->data['User']['image'];
-                $fileExtensions = pathinfo($file['name'], PATHINFO_EXTENSION);
-                if (in_array(strtolower($fileExtensions), array('jpg', 'png', 'gif'))) {
+           $this->User->set($this->request->data);
+           if ($this->User->validates()) {
+                if (!empty($this->request->data['User']['image']['tmp_name'])) {
                     $root = WWW_ROOT . 'img/profiles/';
                     if (!file_exists($root)) {
                         mkdir($root, 0777, true);
@@ -99,12 +98,8 @@ class UsersController extends AppController {
                     if (file_exists($destination)) {
                         unlink($destination);
                     }
-                    move_uploaded_file($file['tmp_name'], $destination);
-                } else {
-                    $this->User->invalidate('image', 'Please upload an image with an extension of (jpg, png, gif)');
+                    move_uploaded_file($this->request->data['User']['image']['tmp_name'], $destination);
                 }
-           }
-           if ($this->User->validates()) {
                 $this->User->saveField('modified_ip', $this->request->clientIp());
                 if ($this->User->save($this->request->data)) {
                     $this->Flash->success('Profile has been successfully updated');
@@ -131,6 +126,7 @@ class UsersController extends AppController {
     public function password() {
         if ($this->request->is(array('post', 'put'))) {
             $this->User->id = $this->Auth->user('id');
+            $this->User->set($this->request->data);
             if ($this->User->validates()) {
                 $this->User->saveField('modified_ip', $this->request->clientIp());
                 if ($this->User->save($this->request->data)) {

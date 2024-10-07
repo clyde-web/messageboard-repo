@@ -145,9 +145,6 @@ class MessagesController extends AppController {
     }
 
     public function view($id = null) {
-        $limit = 10;
-        $page = ($this->request->is('ajax') && $this->request->query('page')) ? (int) $this->request->query('page') : 1 ;
-        $offset = ($page - 1) * $limit;
         $room = $this->Room->find('first', array(
             'joins' => array(
                 array(
@@ -188,25 +185,35 @@ class MessagesController extends AppController {
             return $this->redirect(array('action' => 'index'));
         }
 
-        $totalMessages = $this->Message->find('count', array(
-            'conditions' => array(
-                'Message.room_id' => $room['Room']['id']
-            )
-        ));
-        $hasMore = ($totalMessages > ($offset + $limit));
-        $messages = $this->Message->find('all', array(
-            'conditions' => array(
-                'Message.room_id' => $room['Room']['id']
-            ),
-            'order' => array(
-                'Message.created_at DESC'
-            ),
-            'limit' => $limit,
-            'offset' => $offset
-        ));
-        
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
+            $type = $this->request->query('type');
+            $page = ($this->request->query('page')) ? (int) $this->request->query('page') : 1 ;
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
+
+            if (strtolower($type) === 'multiply') {
+                $offset = 0;
+                $limit = $page * 10;
+            }
+
+            $totalMessages = $this->Message->find('count', array(
+                'conditions' => array(
+                    'Message.room_id' => $room['Room']['id']
+                )
+            ));
+            $hasMore = ($totalMessages > ($offset + $limit));
+            $messages = $this->Message->find('all', array(
+                'conditions' => array(
+                    'Message.room_id' => $room['Room']['id']
+                ),
+                'order' => array(
+                    'Message.created_at DESC'
+                ),
+                'limit' => $limit,
+                'offset' => $offset
+            ));
+        
             $messagesAjax = array();
             foreach($messages as $message) {
                 $messagesAjax[] = array(
@@ -267,16 +274,7 @@ class MessagesController extends AppController {
                 $this->request->data['Message']['sender_id'] = $this->Auth->user('id');
                 $this->request->data['Message']['created_ip'] = $this->request->clientIp();
                 if ($this->Message->save($this->request->data)) {
-                    $message = $this->Message->findById($this->Message->id);
-                    $data = array(
-                        'id' => $message['Message']['id'],
-                        'profile' => Router::url(array('controller' => 'users', 'action' => 'profile', $this->Auth->user('id'))),
-                        'image' => $this->Image->getProfile($this->Auth->user('id')),
-                        'message' => $message['Message']['message'],
-                        'seeMore' => (strlen($message['Message']['message']) > 242),
-                        'created_at' => date('F j, Y h:i', strtotime($message['Message']['created_at']))
-                    );
-                    $response = array('status' => 200, 'data' => $data, 'message' => 'Message Sent');
+                    $response = array('status' => 200, 'message' => 'Message Sent');
                 }
             } else {
                 $response = array('status' => 404, 'errors' => $this->Message->validationErrors);

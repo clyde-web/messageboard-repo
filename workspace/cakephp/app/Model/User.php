@@ -63,6 +63,10 @@ class User extends AppModel {
             'rule' => 'notBlank',
             'message' => 'Please enter your hubbies',
             'on' => 'update'
+        ),
+        'image' => array(
+            'rule' => array('extension', array('jpg', 'png', 'gif')),
+            'message' => 'Please upload an image with an extension of (jpg, png, gif)'
         )
     );
 

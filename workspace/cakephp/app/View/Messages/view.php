@@ -30,7 +30,7 @@
             </a>
         </div>
         
-        <div class="text-right mb-2">
+        <div class="mb-2">
             <?php echo $this->Form->create('Message', array('url' => 'sendMessage')); ?>
             <?php
                 echo $this->Form->input('message', array(
@@ -46,7 +46,12 @@
                 ));
             ?>
             <input type="hidden" value="<?php echo $room['Room']['id']?>" name="data[Message][room_id]" />
-            <?php echo $this->Form->submit('Reply Message', array('class' => 'btn btn-sm btn-outline-primary')); ?>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-reload btn-sm btn-icon btn-light btn-white mr-1">
+                    <em class="icon ni ni-reload"></em>
+                </button>
+                <?php echo $this->Form->submit('Reply Message', array('class' => 'btn btn-sm btn-outline-primary')); ?>
+            </div>
             <?php echo $this->Form->end(); ?>
         </div>
 
@@ -77,59 +82,15 @@
             $(this).text('See More');
         }
     })
+    $(document).on("keydown", "#MessageMessage", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
     $("#MessageViewForm").on("submit", function(e) {
         e.preventDefault();
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 404) {
-                    $.each(response.errors, function(field, errors) {
-                        $.each(errors, function(index, error) {
-                            toastr.clear();
-                            NioApp.Toast(`${error}`, 'error');
-                        });
-                    });
-                }
-                if (response.status === 200) {
-                    $("#MessageMessage").val(null);
-                    toastr.clear();
-                    NioApp.Toast(`${response.message}`, 'success');
-                    const div = document.createElement('div');
-                    div.classList.add('d-flex', 'border', 'mb-2', 'flex-row-reverse');
-                    div.setAttribute('id', `message-${response.data.id}`);
-                    var html = '';
-
-                    html = `
-                        <a href="${response.data.profile}">
-                            <img src="${response.data.image}" alt="User Avatar" width="72" height="72" />
-                        </a>
-                        <div class="message-wrapper">
-                            <div class="message-item ml-1">
-                                <p class="mb-0">${response.data.message}</p>
-                            </div>
-                            <div class="d-flex justify-content-end fs-13px border-top">`;
-                                if (response.data.seeMore) {
-                                    html += `<a href="javascipt:void(0);" class="text-underline mr-2 btn-see-more" data-target="#message-${response.data.id}">See More</a>`;
-                                }
-                    html +=`<a href="javascript:void(0);" class="text-underline btn-delete" data-id="${response.data.id}">
-                                    Delete
-                                </a>
-                                <p class="mb-0 mr-1 ml-2">${response.data.created_at}</p>
-                            </div>
-                        </di>
-                    `;
-                    div.innerHTML = html;
-                    $("#messages").prepend(div);
-                }
-            },
-            error: function() {
-                toastr.clear();
-                NioApp.Toast(`<h5>Failed</h5><p>Oopss, Something went wrong</p>`, 'error');
-            }
-        })
+        sendMessage();
     })
     $(document).on("click", ".btn-delete", function(e) {
         e.preventDefault();
@@ -168,12 +129,21 @@
         $(".spinner-border").removeClass("d-none");
         loadMessages(page);
     })
-    function loadMessages(toPage) {
+    $(document).on("click", ".btn-reload", function(e) {
+        e.preventDefault();
+        if (!$("#showMoreLink a").hasClass("d-none")) {
+            $("#showMoreLink a").addClass("d-none");
+        }
+        $(".spinner-border").removeClass("d-none");
+        $("#messages").empty();
+        loadMessages(page, "multiply")
+    })
+    function loadMessages(toPage, toSend = "normal") {
         $.ajax({
             url: '<?php echo $this->Html->url(array('controller' => 'messages', 'action' => 'view', 'id' => $room['Room']['id'])); ?>',
             type: 'GET',
             dataType: 'json',
-            data: { page: toPage },
+            data: { page: toPage, type: toSend },
             success: function(response) {
                 $(".spinner-border").addClass("d-none");
                 if (response.hasMore) {
@@ -216,6 +186,35 @@
             error: function(error) {
                 $(".spinner-border").addClass("d-none");
                 $("showMoreLink").html("<p class='mb-0 text-center text-danger'>Oopss! Something went wrong!</p>");
+            }
+        })
+    }
+    function sendMessage() {
+        $.ajax({
+            url: $("#MessageViewForm").attr('action'),
+            type: 'POST',
+            data: $("#MessageViewForm").serialize(),
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 404) {
+                    $.each(response.errors, function(field, errors) {
+                        $.each(errors, function(index, error) {
+                            toastr.clear();
+                            NioApp.Toast(`${error}`, 'error');
+                        });
+                    });
+                }
+                if (response.status === 200) {
+                    $("#MessageMessage").val(null);
+                    toastr.clear();
+                    NioApp.Toast(`${response.message}`, 'success');
+                    $("#messages").empty();
+                    loadMessages(page, "multiply");
+                }
+            },
+            error: function() {
+                toastr.clear();
+                NioApp.Toast(`<h5>Failed</h5><p>Oopss, Something went wrong</p>`, 'error');
             }
         })
     }

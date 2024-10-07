@@ -6,17 +6,17 @@
   NioApp.Package.name = "DashLite";
   NioApp.Package.version = "2.3";
   var $win = $(window),
-      $body = $('body'),
-      $doc = $(document),
-      //class names
-  _body_theme = 'nio-theme',
-      _menu = 'nk-menu',
-      _mobile_nav = 'mobile-menu',
-      _header = 'nk-header',
-      _header_menu = 'nk-header-menu',
-      _aside = 'nk-aside',
-      //breakpoints
-  _break = NioApp.Break;
+    $body = $('body'),
+    $doc = $(document),
+    //class names
+    _body_theme = 'nio-theme',
+    _menu = 'nk-menu',
+    _mobile_nav = 'mobile-menu',
+    _header = 'nk-header',
+    _header_menu = 'nk-header-menu',
+    _aside = 'nk-aside',
+    //breakpoints
+    _break = NioApp.Break;
 
   function extend(obj, ext) {
     Object.keys(ext).forEach(function (key) {
@@ -52,28 +52,28 @@
 
   NioApp.Copied = function () {
     var clip = '.clipboard-init',
-        target = '.clipboard-text',
-        sclass = 'clipboard-success',
-        eclass = 'clipboard-error'; // Feedback
+      target = '.clipboard-text',
+      sclass = 'clipboard-success',
+      eclass = 'clipboard-error'; // Feedback
 
     function feedback(el, state) {
       var $elm = $(el),
-          $elp = $elm.parent(),
-          copy = {
-        text: 'Copy',
-        done: 'Copied',
-        fail: 'Failed'
-      },
-          data = {
-        text: $elm.data('clip-text'),
-        done: $elm.data('clip-success'),
-        fail: $elm.data('clip-error')
-      };
+        $elp = $elm.parent(),
+        copy = {
+          text: 'Copy',
+          done: 'Copied',
+          fail: 'Failed'
+        },
+        data = {
+          text: $elm.data('clip-text'),
+          done: $elm.data('clip-success'),
+          fail: $elm.data('clip-error')
+        };
       copy.text = data.text ? data.text : copy.text;
       copy.done = data.done ? data.done : copy.done;
       copy.fail = data.fail ? data.fail : copy.fail;
       var copytext = state === 'success' ? copy.done : copy.fail,
-          addclass = state === 'success' ? sclass : eclass;
+        addclass = state === 'success' ? sclass : eclass;
       $elp.addClass(addclass).find(target).html(copytext);
       setTimeout(function () {
         $elp.removeClass(sclass + ' ' + eclass).find(target).html(copy.text).blur();
@@ -100,13 +100,13 @@
 
   NioApp.CurrentLink = function () {
     var _link = '.nk-menu-link, .menu-link, .nav-link',
-        _currentURL = window.location.href,
-        fileName = _currentURL.substring(0, _currentURL.indexOf("#") == -1 ? _currentURL.length : _currentURL.indexOf("#")),
-        fileName = fileName.substring(0, fileName.indexOf("?") == -1 ? fileName.length : fileName.indexOf("?"));
+      _currentURL = window.location.href,
+      fileName = _currentURL.substring(0, _currentURL.indexOf("#") == -1 ? _currentURL.length : _currentURL.indexOf("#")),
+      fileName = fileName.substring(0, fileName.indexOf("?") == -1 ? fileName.length : fileName.indexOf("?"));
 
     $(_link).each(function () {
       var self = $(this),
-          _self_link = self.attr('href');
+        _self_link = self.attr('href');
 
       if (fileName.match(_self_link)) {
         self.closest("li").addClass('active current-page').parents().closest("li").addClass("active current-page");
@@ -126,15 +126,15 @@
 
   NioApp.Toast = function (msg, ttype, opt) {
     var ttype = ttype ? ttype : 'info',
-        msi = '',
-        ticon = ttype === 'info' ? 'ni ni-info-fill' : ttype === 'success' ? 'ni ni-check-circle-fill' : ttype === 'error' ? 'ni ni-cross-circle-fill' : ttype === 'warning' ? 'ni ni-alert-fill' : '',
-        def = {
-      position: 'bottom-right',
-      ui: '',
-      icon: 'auto',
-      clear: false
-    },
-        attr = opt ? extend(def, opt) : def;
+      msi = '',
+      ticon = ttype === 'info' ? 'ni ni-info-fill' : ttype === 'success' ? 'ni ni-check-circle-fill' : ttype === 'error' ? 'ni ni-cross-circle-fill' : ttype === 'warning' ? 'ni ni-alert-fill' : '',
+      def = {
+        position: 'bottom-right',
+        ui: '',
+        icon: 'auto',
+        clear: false
+      },
+      attr = opt ? extend(def, opt) : def;
     attr.position = attr.position ? 'toast-' + attr.position : 'toast-bottom-right';
     attr.icon = attr.icon === 'auto' ? ticon : attr.icon ? attr.icon : '';
     attr.ui = attr.ui ? ' ' + attr.ui : '';
@@ -180,16 +180,16 @@
 
   NioApp.TGL.content = function (elm, opt) {
     var toggle = elm ? elm : '.toggle',
-        $toggle = $(toggle),
-        $contentD = $('[data-content]'),
-        toggleBreak = true,
-        toggleCurrent = false,
-        def = {
-      active: 'active',
-      content: 'content-active',
-      "break": toggleBreak
-    },
-        attr = opt ? extend(def, opt) : def;
+      $toggle = $(toggle),
+      $contentD = $('[data-content]'),
+      toggleBreak = true,
+      toggleCurrent = false,
+      def = {
+        active: 'active',
+        content: 'content-active',
+        "break": toggleBreak
+      },
+      attr = opt ? extend(def, opt) : def;
     NioApp.TGL.screen($contentD);
     $toggle.on('click', function (e) {
       toggleCurrent = this;
@@ -199,9 +199,9 @@
     $doc.on('mouseup', function (e) {
       if (toggleCurrent) {
         var $toggleCurrent = $(toggleCurrent),
-            $s2c = $('.select2-container'),
-            $dpd = $('.datepicker-dropdown'),
-            $tpc = $('.ui-timepicker-container');
+          $s2c = $('.select2-container'),
+          $dpd = $('.datepicker-dropdown'),
+          $tpc = $('.ui-timepicker-container');
 
         if (!$toggleCurrent.is(e.target) && $toggleCurrent.has(e.target).length === 0 && !$contentD.is(e.target) && $contentD.has(e.target).length === 0 && !$s2c.is(e.target) && $s2c.has(e.target).length === 0 && !$dpd.is(e.target) && $dpd.has(e.target).length === 0 && !$tpc.is(e.target) && $tpc.has(e.target).length === 0) {
           NioApp.Toggle.removed($toggleCurrent.data('target'), attr);
@@ -212,8 +212,8 @@
     $win.on('resize', function () {
       $contentD.each(function () {
         var content = $(this).data('content'),
-            ssize = $(this).data('toggle-screen'),
-            toggleBreak = _break[ssize];
+          ssize = $(this).data('toggle-screen'),
+          toggleBreak = _break[ssize];
 
         if (NioApp.Win.width > toggleBreak) {
           NioApp.Toggle.removed(content, attr);
@@ -225,10 +225,10 @@
 
   NioApp.TGL.expand = function (elm, opt) {
     var toggle = elm ? elm : '.expand',
-        def = {
-      toggle: true
-    },
-        attr = opt ? extend(def, opt) : def;
+      def = {
+        toggle: true
+      },
+      attr = opt ? extend(def, opt) : def;
     $(toggle).on('click', function (e) {
       NioApp.Toggle.trigger($(this).data('target'), attr);
       e.preventDefault();
@@ -238,12 +238,12 @@
 
   NioApp.TGL.ddmenu = function (elm, opt) {
     var imenu = elm ? elm : '.nk-menu-toggle',
-        def = {
-      active: 'active',
-      self: 'nk-menu-toggle',
-      child: 'nk-menu-sub'
-    },
-        attr = opt ? extend(def, opt) : def;
+      def = {
+        active: 'active',
+        self: 'nk-menu-toggle',
+        child: 'nk-menu-sub'
+      },
+      attr = opt ? extend(def, opt) : def;
     $(imenu).on('click', function (e) {
       if (NioApp.Win.width < _break.lg || $(this).parents().hasClass(_aside)) {
         NioApp.Toggle.dropMenu($(this), attr);
@@ -256,23 +256,23 @@
 
   NioApp.TGL.showmenu = function (elm, opt) {
     var toggle = elm ? elm : '.nk-nav-toggle',
-        $toggle = $(toggle),
-        $contentD = $('[data-content]'),
-        toggleBreak = $contentD.hasClass(_header_menu) ? _break.lg : _break.xl,
-        toggleOlay = _header + '-overlay',
-        toggleClose = {
-      profile: true,
-      menu: false
-    },
-        def = {
-      active: 'toggle-active',
-      content: _header + '-active',
-      body: 'nav-shown',
-      overlay: toggleOlay,
-      "break": toggleBreak,
-      close: toggleClose
-    },
-        attr = opt ? extend(def, opt) : def;
+      $toggle = $(toggle),
+      $contentD = $('[data-content]'),
+      toggleBreak = $contentD.hasClass(_header_menu) ? _break.lg : _break.xl,
+      toggleOlay = _header + '-overlay',
+      toggleClose = {
+        profile: true,
+        menu: false
+      },
+      def = {
+        active: 'toggle-active',
+        content: _header + '-active',
+        body: 'nav-shown',
+        overlay: toggleOlay,
+        "break": toggleBreak,
+        close: toggleClose
+      },
+      attr = opt ? extend(def, opt) : def;
     $toggle.on('click', function (e) {
       NioApp.Toggle.trigger($(this).data('target'), attr);
       e.preventDefault();
@@ -296,17 +296,17 @@
       timeout: 400,
       target: '[data-search]'
     },
-        attr = opt ? extend(def, opt) : def;
+      attr = opt ? extend(def, opt) : def;
     var $elem = $(elm),
-        $target = $(attr.target);
+      $target = $(attr.target);
 
     if ($elem.exists()) {
       $elem.on('click', function (e) {
         e.preventDefault();
         var $self = $(this),
-            the_target = $self.data('target'),
-            $self_st = $('[data-search=' + the_target + ']'),
-            $self_tg = $('[data-target=' + the_target + ']');
+          the_target = $self.data('target'),
+          $self_st = $('[data-search=' + the_target + ']'),
+          $self_tg = $('[data-target=' + the_target + ']');
 
         if (!$self_st.hasClass(attr.active)) {
           $self_tg.add($self_st).addClass(attr.active);
@@ -338,7 +338,7 @@
     var def = {
       focus: 'focused'
     },
-        attr = opt ? extend(def, opt) : def;
+      attr = opt ? extend(def, opt) : def;
 
     if ($(elm).exists()) {
       $(elm).each(function () {
@@ -369,7 +369,7 @@
         var def = {
           errorElement: "span"
         },
-            attr = opt ? extend(def, opt) : def;
+          attr = opt ? extend(def, opt) : def;
         $(this).validate(attr);
       });
     }
@@ -390,18 +390,18 @@
     if ($(elm).exists()) {
       $(elm).each(function () {
         var maxFiles = $(elm).data('max-files'),
-            maxFiles = maxFiles ? maxFiles : null;
+          maxFiles = maxFiles ? maxFiles : null;
         var maxFileSize = $(elm).data('max-file-size'),
-            maxFileSize = maxFileSize ? maxFileSize : 256;
+          maxFileSize = maxFileSize ? maxFileSize : 256;
         var acceptedFiles = $(elm).data('accepted-files'),
-            acceptedFiles = acceptedFiles ? acceptedFiles : null;
+          acceptedFiles = acceptedFiles ? acceptedFiles : null;
         var def = {
           autoDiscover: false,
           maxFiles: maxFiles,
           maxFilesize: maxFileSize,
           acceptedFiles: acceptedFiles
         },
-            attr = opt ? extend(def, opt) : def;
+          attr = opt ? extend(def, opt) : def;
         $(this).addClass('dropzone').dropzone(attr);
       });
     }
@@ -485,7 +485,7 @@
             }
           }
         },
-            attr = opt ? extend(def, opt) : def;
+          attr = opt ? extend(def, opt) : def;
         attr = auto_responsive === false ? extend(attr, {
           responsive: false
         }) : attr;
@@ -507,7 +507,7 @@
 
   NioApp.BS.ddfix = function (elm, exc) {
     var dd = elm ? elm : '.dropdown-menu',
-        ex = exc ? exc : 'a:not(.clickable), button:not(.clickable), a:not(.clickable) *, button:not(.clickable) *';
+      ex = exc ? exc : 'a:not(.clickable), button:not(.clickable), a:not(.clickable) *, button:not(.clickable) *';
     $(dd).on('click', function (e) {
       if (!$(e.target).is(ex)) {
         e.stopPropagation();
@@ -542,9 +542,9 @@
     var tab = elm ? elm : '[data-toggle="modal"]';
     $(tab).on('click', function () {
       var _this = $(this),
-          target = _this.data('target'),
-          target_href = _this.attr('href'),
-          tg_tab = _this.data('tab-target');
+        target = _this.data('target'),
+        target_href = _this.attr('href'),
+        tg_tab = _this.data('tab-target');
 
       var modal = target ? $body.find(target) : $body.find(target_href);
 
@@ -581,7 +581,7 @@
       var def = {
         min: 0
       },
-          attr = opt ? extend(def, opt) : def;
+        attr = opt ? extend(def, opt) : def;
       $(elm).each(function () {
         $(this).knob(attr);
       });
@@ -611,7 +611,7 @@
     if ($(elm).exists() && typeof noUiSlider !== 'undefined') {
       $(elm).each(function () {
         var $self = $(this),
-            self_id = $self.attr('id');
+          self_id = $self.attr('id');
         var target = document.getElementById(self_id);
         var def = {
           start: [25],
@@ -622,7 +622,7 @@
             'max': 100
           }
         },
-            attr = opt ? extend(def, opt) : def;
+          attr = opt ? extend(def, opt) : def;
         noUiSlider.create(target, attr);
       });
     }
@@ -647,7 +647,7 @@
           'nextArrow': '<div class="slick-arrow-next"><a href="javascript:void(0);" class="slick-next"><em class="icon ni ni-chevron-right"></em></a></div>',
           rtl: NioApp.State.isRTL
         },
-            attr = opt ? extend(def, opt) : def;
+          attr = opt ? extend(def, opt) : def;
         $(this).slick(attr);
       });
     }

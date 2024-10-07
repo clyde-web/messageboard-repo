@@ -9,6 +9,7 @@
 	<?php
 		echo $this->Html->meta('icon');
 		echo $this->Html->css('style');
+		echo $this->Html->css('skins/theme-egyptian');
 		echo $this->Html->css('theme');
 
 		echo $this->fetch('meta');
@@ -119,9 +120,14 @@
 		</div>
 	</div>
 
+	<button type="button" class="btn btn-scroll btn-sm btn-icon btn-outline-primary">
+	  <em class="icon ni ni-arrow-long-up"></em>
+	</button>
+
 	<?php
 		echo $this->Html->script('bundle');
 		echo $this->Html->script('script');
+		echo $this->Html->script('scroll');
 		echo $this->fetch('custom_script');
 	?>
 </body>
