@@ -1,7 +1,10 @@
 <?php
-App::uses('AppController', 'Controller');
 
-class UsersController extends AppController {
+namespace NativeCamp;
+
+\App::uses('AppController', 'Controller');
+
+class UsersController extends \AppController {
     public $components = array('Image');
 
     public function login() {
@@ -39,7 +42,7 @@ class UsersController extends AppController {
                         $this->User->saveField('last_login_time', date('Y-m-d H:i:s'));
                         $this->User->saveField('modified_ip', $this->request->clientIp());
                         $this->Session->write('Welcome', true);
-                        $response = array('status' => 200, 'action' => Router::url(array('action' => 'welcome')));
+                        $response = array('status' => 200, 'action' => \Router::url(array('action' => 'welcome')));
                     }
                 }
             } else {
@@ -77,7 +80,7 @@ class UsersController extends AppController {
             )
         ));
         if (!$user) {
-            throw new NotFoundException(__('Invalid User.'));
+            throw new \NotFoundException(__('Invalid User.'));
         }
         $this->set('canUpdate', ($this->Auth->user('id') === $userId));
         $this->set('user', $user);
